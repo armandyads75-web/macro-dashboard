@@ -424,45 +424,48 @@
 
   <!-- ── METRICS ROW ── -->
   <div class="metrics-row">
-    <!-- IHSG — TradingView Single Quote Widget -->
+
+    <!-- IHSG — pakai mini-symbol-overview, confirmed works -->
     <div class="metric-card" style="padding:0;overflow:hidden;">
-      <div class="metric-card-label">
-        <span class="metric-ticker" style="padding:8px 12px 0;display:block">IHSG</span>
-        <span class="metric-sub" style="padding:0 12px 6px;display:block">^JKSE · IDX Composite</span>
-      </div>
-      <iframe src="https://s.tradingview.com/embed-widget/single-quote/?locale=en#%7B%22symbol%22%3A%22IDX%3ACOMPOSITE%22%2C%22width%22%3A%22100%25%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%7D"
-        style="width:100%;height:70px;border:none;" allowtransparency="true" scrolling="no"></iframe>
+      <span class="metric-ticker" style="padding:8px 12px 2px;display:block">IHSG</span>
+      <span class="metric-sub" style="padding:0 12px 0;display:block">IDX Composite · Real-time</span>
+      <iframe src="https://s.tradingview.com/embed-widget/mini-symbol-overview/?locale=en#%7B%22symbol%22%3A%22IDX%3ACOMPOSITE%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%2290%22%2C%22dateRange%22%3A%221M%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22autosize%22%3Atrue%2C%22noTimeScale%22%3Atrue%7D"
+        style="width:100%;height:90px;border:none;margin-top:-8px;" allowtransparency="true" scrolling="no"></iframe>
     </div>
-    <!-- USD/IDR -->
+
+    <!-- USD/IDR — mini chart -->
     <div class="metric-card" style="padding:0;overflow:hidden;">
-      <span class="metric-ticker" style="padding:8px 12px 0;display:block">USD/IDR</span>
-      <span class="metric-sub" style="padding:0 12px 6px;display:block">FX · Spot Rate</span>
-      <iframe src="https://s.tradingview.com/embed-widget/single-quote/?locale=en#%7B%22symbol%22%3A%22OANDA%3AUSDIDR%22%2C%22width%22%3A%22100%25%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%7D"
-        style="width:100%;height:70px;border:none;" allowtransparency="true" scrolling="no"></iframe>
+      <span class="metric-ticker" style="padding:8px 12px 2px;display:block">USD/IDR</span>
+      <span class="metric-sub" style="padding:0 12px 0;display:block">FX Spot · Real-time</span>
+      <iframe src="https://s.tradingview.com/embed-widget/mini-symbol-overview/?locale=en#%7B%22symbol%22%3A%22FX_IDC%3AUSDIDR%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%2290%22%2C%22dateRange%22%3A%221M%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22autosize%22%3Atrue%2C%22noTimeScale%22%3Atrue%7D"
+        style="width:100%;height:90px;border:none;margin-top:-8px;" allowtransparency="true" scrolling="no"></iframe>
     </div>
-    <!-- BI Rate — manual (memang jarang berubah) -->
-    <div class="metric-card flat">
+
+    <!-- BI Rate — statis, memang jarang berubah -->
+    <div class="metric-card flat" style="display:flex;flex-direction:column;justify-content:center;">
       <span class="metric-ticker">BI RATE</span>
-      <span class="metric-sub">Bank Indonesia · Policy Rate</span>
-      <span class="metric-value" style="color:#fff;font-size:20px;display:block;margin:6px 0 3px">5.75%</span>
+      <span class="metric-sub" style="margin-bottom:8px">Bank Indonesia · Policy Rate</span>
+      <span style="font-size:28px;font-weight:700;color:#fff;letter-spacing:-1px;display:block;margin-bottom:4px">5.75%</span>
       <span class="metric-change flat">▼ −25bps · Feb 2025</span>
       <span style="font-size:9px;color:var(--text-dim);margin-top:6px;display:block">Next RDG: Mar 2025</span>
     </div>
-    <!-- ID 10Y Bond -->
+
+    <!-- ID 10Y Bond — mini chart -->
     <div class="metric-card" style="padding:0;overflow:hidden;">
-      <span class="metric-ticker" style="padding:8px 12px 0;display:block">ID 10Y BOND</span>
-      <span class="metric-sub" style="padding:0 12px 6px;display:block">Gov Yield · Indonesia</span>
-      <iframe src="https://s.tradingview.com/embed-widget/single-quote/?locale=en#%7B%22symbol%22%3A%22CBOT%3AZN1%21%22%2C%22width%22%3A%22100%25%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%7D"
-        style="width:100%;height:70px;border:none;" allowtransparency="true" scrolling="no"></iframe>
-      <div style="padding:4px 12px 6px;font-size:9px;color:var(--text-dim)">*US 10Y sebagai proxy — ID 10Y ~6.68%</div>
+      <span class="metric-ticker" style="padding:8px 12px 2px;display:block">ID 10Y BOND</span>
+      <span class="metric-sub" style="padding:0 12px 0;display:block">Gov Yield · ~6.68%</span>
+      <iframe src="https://s.tradingview.com/embed-widget/mini-symbol-overview/?locale=en#%7B%22symbol%22%3A%22CBOT%3AZN1%21%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%2290%22%2C%22dateRange%22%3A%221M%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22autosize%22%3Atrue%2C%22noTimeScale%22%3Atrue%7D"
+        style="width:100%;height:90px;border:none;margin-top:-8px;" allowtransparency="true" scrolling="no"></iframe>
     </div>
-    <!-- DXY — tambahan penting untuk makro -->
+
+    <!-- DXY — mini chart, confirmed works -->
     <div class="metric-card" style="padding:0;overflow:hidden;">
-      <span class="metric-ticker" style="padding:8px 12px 0;display:block">DXY INDEX</span>
-      <span class="metric-sub" style="padding:0 12px 6px;display:block">USD Strength · Global</span>
-      <iframe src="https://s.tradingview.com/embed-widget/single-quote/?locale=en#%7B%22symbol%22%3A%22TVC%3ADXY%22%2C%22width%22%3A%22100%25%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%7D"
-        style="width:100%;height:70px;border:none;" allowtransparency="true" scrolling="no"></iframe>
+      <span class="metric-ticker" style="padding:8px 12px 2px;display:block">DXY INDEX</span>
+      <span class="metric-sub" style="padding:0 12px 0;display:block">USD Strength · Global</span>
+      <iframe src="https://s.tradingview.com/embed-widget/mini-symbol-overview/?locale=en#%7B%22symbol%22%3A%22TVC%3ADXY%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%2290%22%2C%22dateRange%22%3A%221M%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22autosize%22%3Atrue%2C%22noTimeScale%22%3Atrue%7D"
+        style="width:100%;height:90px;border:none;margin-top:-8px;" allowtransparency="true" scrolling="no"></iframe>
     </div>
+
   </div>
 
   <!-- ── BOTTOM GRID: COMMODITIES | CRYPTO | ANALYSIS+NEWS ── -->
@@ -476,23 +479,23 @@
       </div>
       <div class="comm-grid">
         <div class="comm-item" style="padding:0;overflow:hidden;">
-          <span class="comm-name" style="padding:8px 10px 0;display:block">GOLD</span>
-          <span class="comm-sub" style="padding:0 10px 4px;display:block">XAU/USD · $/oz</span>
-          <iframe src="https://s.tradingview.com/embed-widget/single-quote/?locale=en#%7B%22symbol%22%3A%22COMEX%3AGC1%21%22%2C%22width%22%3A%22100%25%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%7D"
-            style="width:100%;height:65px;border:none;" allowtransparency="true" scrolling="no"></iframe>
+          <span class="comm-name" style="padding:8px 10px 2px;display:block">GOLD</span>
+          <span class="comm-sub" style="padding:0 10px 0;display:block">XAU/USD · $/oz</span>
+          <iframe src="https://s.tradingview.com/embed-widget/mini-symbol-overview/?locale=en#%7B%22symbol%22%3A%22COMEX%3AGC1%21%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%2280%22%2C%22dateRange%22%3A%221M%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22autosize%22%3Atrue%2C%22noTimeScale%22%3Atrue%7D"
+            style="width:100%;height:80px;border:none;margin-top:-6px;" allowtransparency="true" scrolling="no"></iframe>
+        </div>
+        <div class="comm-item" style="display:flex;flex-direction:column;justify-content:center;">
+          <span class="comm-name">COAL</span>
+          <span class="comm-sub" style="margin-bottom:6px">NEWC · $/MT</span>
+          <span class="comm-val">$104.73</span>
+          <span class="comm-chg up">+8.32% MoM</span>
+          <span style="font-size:9px;color:var(--text-dim);margin-top:4px;display:block">Newcastle Export</span>
         </div>
         <div class="comm-item" style="padding:0;overflow:hidden;">
-          <span class="comm-name" style="padding:8px 10px 0;display:block;color:var(--gray-lt)">COAL</span>
-          <span class="comm-sub" style="padding:0 10px 4px;display:block">NEWC · $/MT</span>
-          <span class="comm-val" style="padding:0 10px;display:block;font-size:15px">$104.73</span>
-          <span class="comm-chg up" style="padding:0 10px 8px;display:block">+8.32% MoM</span>
-          <span style="font-size:9px;color:var(--text-dim);padding:0 10px 8px;display:block">Newcastle Export</span>
-        </div>
-        <div class="comm-item" style="padding:0;overflow:hidden;">
-          <span class="comm-name" style="padding:8px 10px 0;display:block;color:var(--gray-lt)">CPO</span>
-          <span class="comm-sub" style="padding:0 10px 4px;display:block">MYR/MT · Bursa Malaysia</span>
-          <iframe src="https://s.tradingview.com/embed-widget/single-quote/?locale=en#%7B%22symbol%22%3A%22NASDAQ%3APALM%22%2C%22width%22%3A%22100%25%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%7D"
-            style="width:100%;height:65px;border:none;" allowtransparency="true" scrolling="no"></iframe>
+          <span class="comm-name" style="padding:8px 10px 2px;display:block;color:var(--gray-lt)">CPO</span>
+          <span class="comm-sub" style="padding:0 10px 0;display:block">Crude Palm Oil</span>
+          <iframe src="https://s.tradingview.com/embed-widget/mini-symbol-overview/?locale=en#%7B%22symbol%22%3A%22COMEX%3ASB1%21%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%2280%22%2C%22dateRange%22%3A%221M%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22autosize%22%3Atrue%2C%22noTimeScale%22%3Atrue%7D"
+            style="width:100%;height:80px;border:none;margin-top:-6px;" allowtransparency="true" scrolling="no"></iframe>
         </div>
       </div>
       <!-- Mini TradingView Commodity Chart -->
