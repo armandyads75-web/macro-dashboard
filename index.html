@@ -384,7 +384,7 @@
 
 <!-- ── TICKER TAPE ── -->
 <div class="ticker-wrap">
-  <iframe src="https://s.tradingview.com/embed-widget/ticker-tape/?locale=en#%7B%22symbols%22%3A%5B%7B%22proName%22%3A%22IDX%3ACOMPOSITE%22%2C%22title%22%3A%22IHSG%22%7D%2C%7B%22proName%22%3A%22FX_IDC%3AUSDIDR%22%2C%22title%22%3A%22USD%2FIDR%22%7D%2C%7B%22proName%22%3A%22BINANCE%3ABTCUSDT%22%2C%22title%22%3A%22BTC%22%7D%2C%7B%22proName%22%3A%22BINANCE%3AETHUSDT%22%2C%22title%22%3A%22ETH%22%7D%2C%7B%22proName%22%3A%22COMEX%3AGC1%21%22%2C%22title%22%3A%22GOLD%22%7D%2C%7B%22proName%22%3A%22NYMEX%3ACL1%21%22%2C%22title%22%3A%22OIL%22%7D%2C%7B%22proName%22%3A%22SP%3ASPX%22%2C%22title%22%3A%22S%26P500%22%7D%2C%7B%22proName%22%3A%22NASDAQ%3ANDX%22%2C%22title%22%3A%22NASDAQ%22%7D%5D%2C%22showSymbolLogo%22%3Atrue%2C%22isTransparent%22%3Atrue%2C%22displayMode%22%3A%22adaptive%22%2C%22colorTheme%22%3A%22dark%22%7D"
+  <iframe src="https://s.tradingview.com/embed-widget/ticker-tape/?locale=en#%7B%22symbols%22%3A%5B%7B%22proName%22%3A%22IDX%3ACOMPOSITE%22%2C%22title%22%3A%22IHSG%22%7D%2C%7B%22proName%22%3A%22FX_IDC%3AUSDIDR%22%2C%22title%22%3A%22USD%2FIDR%22%7D%2C%7B%22proName%22%3A%22BINANCE%3ABTCUSDT%22%2C%22title%22%3A%22BTC%22%7D%2C%7B%22proName%22%3A%22BINANCE%3AETHUSDT%22%2C%22title%22%3A%22ETH%22%7D%2C%7B%22proName%22%3A%22BINANCE%3ABNBUSDT%22%2C%22title%22%3A%22BNB%22%7D%2C%7B%22proName%22%3A%22IDX%3ABBCA%22%2C%22title%22%3A%22BBCA%22%7D%2C%7B%22proName%22%3A%22IDX%3ABBRI%22%2C%22title%22%3A%22BBRI%22%7D%2C%7B%22proName%22%3A%22IDX%3ATLKM%22%2C%22title%22%3A%22TLKM%22%7D%5D%2C%22showSymbolLogo%22%3Atrue%2C%22isTransparent%22%3Atrue%2C%22displayMode%22%3A%22adaptive%22%2C%22colorTheme%22%3A%22dark%22%7D"
     allowtransparency="true" scrolling="no"></iframe>
 </div>
 
@@ -450,12 +450,13 @@
       <span style="font-size:9px;color:var(--text-dim);margin-top:6px;display:block">Next RDG: Mar 2025</span>
     </div>
 
-    <!-- ID 10Y Bond — mini chart -->
-    <div class="metric-card" style="padding:0;overflow:hidden;">
-      <span class="metric-ticker" style="padding:8px 12px 2px;display:block">ID 10Y BOND</span>
-      <span class="metric-sub" style="padding:0 12px 0;display:block">Gov Yield · ~6.68%</span>
-      <iframe src="https://s.tradingview.com/embed-widget/mini-symbol-overview/?locale=en#%7B%22symbol%22%3A%22CBOT%3AZN1%21%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%2290%22%2C%22dateRange%22%3A%221M%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22autosize%22%3Atrue%2C%22noTimeScale%22%3Atrue%7D"
-        style="width:100%;height:90px;border:none;margin-top:-8px;" allowtransparency="true" scrolling="no"></iframe>
+    <!-- ID 10Y Bond — static card clean -->
+    <div class="metric-card flat" style="display:flex;flex-direction:column;justify-content:center;">
+      <span class="metric-ticker">ID 10Y BOND</span>
+      <span class="metric-sub" style="margin-bottom:8px">Gov Yield · Indonesia</span>
+      <span style="font-size:28px;font-weight:700;color:#fff;letter-spacing:-1px;display:block;margin-bottom:4px" id="val-bond">6.68%</span>
+      <span class="metric-change down">▲ Yield naik = harga turun</span>
+      <span style="font-size:9px;color:var(--text-dim);margin-top:6px;display:block">Sumber: Bank Indonesia</span>
     </div>
 
     <!-- DXY — static card, data dari CoinGecko JS -->
@@ -479,11 +480,12 @@
         <span class="panel-badge delay">⚠ 15m Delay</span>
       </div>
       <div class="comm-grid">
-        <div class="comm-item" style="padding:0;overflow:hidden;">
-          <span class="comm-name" style="padding:8px 10px 2px;display:block">GOLD</span>
-          <span class="comm-sub" style="padding:0 10px 0;display:block">XAU/USD · Futures</span>
-          <iframe src="https://s.tradingview.com/embed-widget/mini-symbol-overview/?locale=en#%7B%22symbol%22%3A%22COMEX%3AGC1%21%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%2285%22%2C%22dateRange%22%3A%221M%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22autosize%22%3Atrue%2C%22noTimeScale%22%3Atrue%2C%22largeChartUrl%22%3A%22%22%7D"
-            style="width:100%;height:85px;border:none;" allowtransparency="true" scrolling="no"></iframe>
+        <div class="comm-item" style="display:flex;flex-direction:column;justify-content:center;">
+          <span class="comm-name">GOLD</span>
+          <span class="comm-sub" style="margin-bottom:6px">XAU/USD · $/oz</span>
+          <span class="comm-val" id="val-gold">$3,180</span>
+          <span class="comm-chg" id="chg-gold" style="color:var(--green)">loading...</span>
+          <span style="font-size:9px;color:var(--text-dim);margin-top:4px;display:block" id="gold-idr">Rp —/g</span>
         </div>
         <div class="comm-item" style="display:flex;flex-direction:column;justify-content:center;">
           <span class="comm-name">COAL</span>
@@ -632,35 +634,57 @@ const opts = { year:'numeric', month:'long', day:'numeric' };
 document.getElementById('analysis-date').textContent =
   'Updated: ' + new Date().toLocaleDateString('id-ID', opts);
 
-/* ── CRYPTO via CoinGecko (no API key needed) ── */
-async function fetchCrypto() {
-  try {
-    const r = await fetch(
-      'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd&include_24hr_change=true'
-    );
-    const d = await r.json();
-    const fmt = n => n >= 1000 ? n.toLocaleString('en-US', {maximumFractionDigits:0}) : n.toLocaleString('en-US', {maximumFractionDigits:2});
-    const fmtChg = n => (n >= 0 ? '+' : '') + n.toFixed(2) + '%';
-    const colorClass = n => n >= 0 ? 'up' : 'down';
-
-    document.getElementById('val-btc').textContent = '$' + fmt(d.bitcoin.usd);
-    const btcChg = document.getElementById('chg-btc');
-    btcChg.textContent = fmtChg(d.bitcoin.usd_24h_change);
-    btcChg.className = 'crypto-chg ' + colorClass(d.bitcoin.usd_24h_change);
-
-    document.getElementById('val-eth').textContent = '$' + fmt(d.ethereum.usd);
-    const ethChg = document.getElementById('chg-eth');
-    ethChg.textContent = fmtChg(d.ethereum.usd_24h_change);
-    ethChg.className = 'crypto-chg ' + colorClass(d.ethereum.usd_24h_change);
-  } catch(e) {
-    document.getElementById('val-btc').textContent = 'N/A';
-    document.getElementById('val-eth').textContent = 'N/A';
-    console.warn('Crypto fetch failed:', e);
-  }
-}
+/* ── MARKET DATA (BTC, ETH, Gold) via CoinGecko ── */
 
 /* ── GOLD PRICE ── */
 // Ditampilkan via TradingView widget (real-time)
+
+/* ── FETCH GOLD + CRYPTO via CoinGecko ── */
+async function fetchMarketData() {
+  try {
+    // Fetch BTC, ETH, dan gold (PAXG = 1oz gold token, harga = XAU/USD)
+    const r = await fetch(
+      'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,pax-gold&vs_currencies=usd,idr&include_24hr_change=true'
+    );
+    const d = await r.json();
+
+    const fmt    = n => n >= 1000 ? n.toLocaleString('en-US', {maximumFractionDigits:0}) : n.toFixed(2);
+    const fmtChg = n => (n >= 0 ? '▲ +' : '▼ ') + Math.abs(n).toFixed(2) + '%';
+    const cls    = n => n >= 0 ? 'up' : 'down';
+
+    // BTC
+    document.getElementById('val-btc').textContent = '$' + fmt(d.bitcoin.usd);
+    const btcChg = document.getElementById('chg-btc');
+    btcChg.textContent = fmtChg(d.bitcoin.usd_24h_change);
+    btcChg.className = 'crypto-chg ' + cls(d.bitcoin.usd_24h_change);
+
+    // ETH
+    document.getElementById('val-eth').textContent = '$' + fmt(d.ethereum.usd);
+    const ethChg = document.getElementById('chg-eth');
+    ethChg.textContent = fmtChg(d.ethereum.usd_24h_change);
+    ethChg.className = 'crypto-chg ' + cls(d.ethereum.usd_24h_change);
+
+    // GOLD via PAXG (1 PAXG = 1 troy oz gold)
+    if (d['pax-gold']) {
+      const goldUsd = d['pax-gold'].usd;
+      const goldIdr = d['pax-gold'].idr;
+      const goldChgVal = d['pax-gold'].usd_24h_change;
+
+      document.getElementById('val-gold').textContent = '$' + fmt(goldUsd);
+      const goldChgEl = document.getElementById('chg-gold');
+      goldChgEl.textContent = fmtChg(goldChgVal);
+      goldChgEl.className = 'comm-chg ' + cls(goldChgVal);
+
+      // Harga per gram (1 troy oz = 31.1035g)
+      const perGram = Math.round(goldIdr / 31.1035);
+      document.getElementById('gold-idr').textContent =
+        'Rp' + perGram.toLocaleString('id-ID') + '/gram';
+    }
+
+  } catch(e) {
+    console.warn('Market data fetch failed:', e);
+  }
+}
 
 /* ── IDX & COMMODITY DATA ── */
 // IHSG, USD/IDR, Bond, Gold, CPO sekarang ditampilkan via TradingView
@@ -697,11 +721,11 @@ function renderNews() {
 }
 
 /* ── INIT ── */
-fetchCrypto();
+fetchMarketData();
 renderNews();
 
-// Refresh crypto every 60s
-setInterval(fetchCrypto, 60000);
+// Refresh setiap 60 detik
+setInterval(fetchMarketData, 60000);
 </script>
 </body>
 </html>
