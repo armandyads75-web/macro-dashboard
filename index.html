@@ -384,7 +384,7 @@
 
 <!-- ── TICKER TAPE ── -->
 <div class="ticker-wrap">
-  <iframe src="https://s.tradingview.com/embed-widget/ticker-tape/?locale=en#%7B%22symbols%22%3A%5B%7B%22proName%22%3A%22IDX%3ACOMPOSITE%22%2C%22title%22%3A%22IHSG%22%7D%2C%7B%22proName%22%3A%22FX_IDC%3AUSDIDR%22%2C%22title%22%3A%22USD%2FIDR%22%7D%2C%7B%22proName%22%3A%22BINANCE%3ABTCUSDT%22%2C%22title%22%3A%22BTC%22%7D%2C%7B%22proName%22%3A%22BINANCE%3AETHUSDT%22%2C%22title%22%3A%22ETH%22%7D%2C%7B%22proName%22%3A%22BINANCE%3ABNBUSDT%22%2C%22title%22%3A%22BNB%22%7D%2C%7B%22proName%22%3A%22IDX%3ABBCA%22%2C%22title%22%3A%22BBCA%22%7D%2C%7B%22proName%22%3A%22IDX%3ABBRI%22%2C%22title%22%3A%22BBRI%22%7D%2C%7B%22proName%22%3A%22IDX%3ATLKM%22%2C%22title%22%3A%22TLKM%22%7D%5D%2C%22showSymbolLogo%22%3Atrue%2C%22isTransparent%22%3Atrue%2C%22displayMode%22%3A%22adaptive%22%2C%22colorTheme%22%3A%22dark%22%7D"
+  <iframe src="https://s.tradingview.com/embed-widget/ticker-tape/?locale=en#%7B%22symbols%22%3A%5B%7B%22proName%22%3A%22IDX%3ACOMPOSITE%22%2C%22title%22%3A%22IHSG%22%7D%2C%7B%22proName%22%3A%22FX_IDC%3AUSDIDR%22%2C%22title%22%3A%22USD%2FIDR%22%7D%2C%7B%22proName%22%3A%22IDX%3ABBCA%22%2C%22title%22%3A%22BBCA%22%7D%2C%7B%22proName%22%3A%22IDX%3ABBRI%22%2C%22title%22%3A%22BBRI%22%7D%2C%7B%22proName%22%3A%22IDX%3ATLKM%22%2C%22title%22%3A%22TLKM%22%7D%2C%7B%22proName%22%3A%22IDX%3AASII%22%2C%22title%22%3A%22ASII%22%7D%2C%7B%22proName%22%3A%22BINANCE%3ABTCUSDT%22%2C%22title%22%3A%22BTC%22%7D%2C%7B%22proName%22%3A%22BINANCE%3AETHUSDT%22%2C%22title%22%3A%22ETH%22%7D%5D%2C%22showSymbolLogo%22%3Atrue%2C%22isTransparent%22%3Atrue%2C%22displayMode%22%3A%22adaptive%22%2C%22colorTheme%22%3A%22dark%22%7D"
     allowtransparency="true" scrolling="no"></iframe>
 </div>
 
@@ -482,10 +482,10 @@
       <div class="comm-grid">
         <div class="comm-item" style="display:flex;flex-direction:column;justify-content:center;">
           <span class="comm-name">GOLD</span>
-          <span class="comm-sub" style="margin-bottom:6px">XAU/USD · $/oz</span>
-          <span class="comm-val" id="val-gold">$3,180</span>
-          <span class="comm-chg" id="chg-gold" style="color:var(--green)">loading...</span>
-          <span style="font-size:9px;color:var(--text-dim);margin-top:4px;display:block" id="gold-idr">Rp —/g</span>
+          <span class="comm-sub" style="margin-bottom:6px">XAU/USD · Spot $/oz</span>
+          <span class="comm-val" id="val-gold">loading...</span>
+          <span class="comm-chg" id="chg-gold" style="color:var(--gray)">—</span>
+          <span style="font-size:9px;color:var(--text-dim);margin-top:4px;display:block" id="gold-idr">Rp —/gram</span>
         </div>
         <div class="comm-item" style="display:flex;flex-direction:column;justify-content:center;">
           <span class="comm-name">COAL</span>
@@ -639,50 +639,54 @@ document.getElementById('analysis-date').textContent =
 /* ── GOLD PRICE ── */
 // Ditampilkan via TradingView widget (real-time)
 
-/* ── FETCH GOLD + CRYPTO via CoinGecko ── */
+/* ── FETCH CRYPTO via CoinGecko ── */
 async function fetchMarketData() {
+  // BTC & ETH
   try {
-    // Fetch BTC, ETH, dan gold (PAXG = 1oz gold token, harga = XAU/USD)
     const r = await fetch(
-      'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,pax-gold&vs_currencies=usd,idr&include_24hr_change=true'
+      'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd&include_24hr_change=true'
     );
     const d = await r.json();
-
-    const fmt    = n => n >= 1000 ? n.toLocaleString('en-US', {maximumFractionDigits:0}) : n.toFixed(2);
+    const fmt    = n => n.toLocaleString('en-US', {maximumFractionDigits:0});
     const fmtChg = n => (n >= 0 ? '▲ +' : '▼ ') + Math.abs(n).toFixed(2) + '%';
     const cls    = n => n >= 0 ? 'up' : 'down';
 
-    // BTC
     document.getElementById('val-btc').textContent = '$' + fmt(d.bitcoin.usd);
     const btcChg = document.getElementById('chg-btc');
     btcChg.textContent = fmtChg(d.bitcoin.usd_24h_change);
     btcChg.className = 'crypto-chg ' + cls(d.bitcoin.usd_24h_change);
 
-    // ETH
     document.getElementById('val-eth').textContent = '$' + fmt(d.ethereum.usd);
     const ethChg = document.getElementById('chg-eth');
     ethChg.textContent = fmtChg(d.ethereum.usd_24h_change);
     ethChg.className = 'crypto-chg ' + cls(d.ethereum.usd_24h_change);
-
-    // GOLD via PAXG (1 PAXG = 1 troy oz gold)
-    if (d['pax-gold']) {
-      const goldUsd = d['pax-gold'].usd;
-      const goldIdr = d['pax-gold'].idr;
-      const goldChgVal = d['pax-gold'].usd_24h_change;
-
-      document.getElementById('val-gold').textContent = '$' + fmt(goldUsd);
-      const goldChgEl = document.getElementById('chg-gold');
-      goldChgEl.textContent = fmtChg(goldChgVal);
-      goldChgEl.className = 'comm-chg ' + cls(goldChgVal);
-
-      // Harga per gram (1 troy oz = 31.1035g)
-      const perGram = Math.round(goldIdr / 31.1035);
-      document.getElementById('gold-idr').textContent =
-        'Rp' + perGram.toLocaleString('id-ID') + '/gram';
-    }
-
   } catch(e) {
-    console.warn('Market data fetch failed:', e);
+    console.warn('Crypto fetch failed:', e);
+  }
+
+  // GOLD spot via frankfurter.app (free, no key, supports XAU)
+  try {
+    const gr = await fetch('https://api.frankfurter.app/latest?from=XAU&to=USD,IDR');
+    const gd = await gr.json();
+    if (gd.rates?.USD) {
+      const goldUsd = Math.round(gd.rates.USD);
+      document.getElementById('val-gold').textContent =
+        '$' + goldUsd.toLocaleString('en-US');
+
+      if (gd.rates?.IDR) {
+        const perGram = Math.round(gd.rates.IDR / 31.1035);
+        document.getElementById('gold-idr').textContent =
+          'Rp' + perGram.toLocaleString('id-ID') + '/gram';
+      }
+      const goldChgEl = document.getElementById('chg-gold');
+      goldChgEl.textContent = '● XAU Spot · Live';
+      goldChgEl.style.color = 'var(--gold)';
+    }
+  } catch(e) {
+    document.getElementById('val-gold').textContent = '≈ $3,100';
+    document.getElementById('gold-idr').textContent = '≈ Rp1.590.000/gram';
+    document.getElementById('chg-gold').textContent = 'offline · approx';
+    console.warn('Gold fetch failed:', e);
   }
 }
 
