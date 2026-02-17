@@ -641,7 +641,7 @@ document.getElementById('analysis-date').textContent =
 
 /* ── FETCH CRYPTO via CoinGecko ── */
 async function fetchMarketData() {
-  // BTC & ETH
+  // BTC & ETH via CoinGecko
   try {
     const r = await fetch(
       'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd&include_24hr_change=true'
@@ -664,30 +664,75 @@ async function fetchMarketData() {
     console.warn('Crypto fetch failed:', e);
   }
 
-  // GOLD spot via frankfurter.app (free, no key, supports XAU)
-  try {
-    const gr = await fetch('https://api.frankfurter.app/latest?from=XAU&to=USD,IDR');
-    const gd = await gr.json();
-    if (gd.rates?.USD) {
-      const goldUsd = Math.round(gd.rates.USD);
-      document.getElementById('val-gold').textContent =
-        '$' + goldUsd.toLocaleString('en-US');
+  // GOLD via Yahoo Finance (GC=F = Gold Futures) proxied through allorigins
+  fetchGoldPrice();
+}
 
-      if (gd.rates?.IDR) {
-        const perGram = Math.round(gd.rates.IDR / 31.1035);
-        document.getElementById('gold-idr').textContent =
-          'Rp' + perGram.toLocaleString('id-ID') + '/gram';
-      }
-      const goldChgEl = document.getElementById('chg-gold');
-      goldChgEl.textContent = '● XAU Spot · Live';
-      goldChgEl.style.color = 'var(--gold)';
+async function fetchGoldPrice() {
+  const goldEl    = document.getElementById('val-gold');
+  const goldChgEl = document.getElementById('chg-gold');
+  const goldIdrEl = document.getElementById('gold-idr');
+
+  // Try 1: Yahoo Finance via allorigins CORS proxy
+  try {
+    const url = 'https://query1.finance.yahoo.com/v8/finance/chart/GC%3DF?interval=1d&range=2d';
+    const proxy = 'https://api.allorigins.win/get?url=' + encodeURIComponent(url);
+    const r = await fetch(proxy);
+    const raw = await r.json();
+    const data = JSON.parse(raw.contents);
+    const meta = data.chart.result[0].meta;
+    const price = meta.regularMarketPrice;
+    const prev  = meta.previousClose;
+    const chgPct = ((price - prev) / prev) * 100;
+
+    // Get USD/IDR for IDR conversion
+    let idrRate = 16835; // fallback
+    try {
+      const fxUrl = 'https://query1.finance.yahoo.com/v8/finance/chart/IDR%3DX?interval=1d&range=1d';
+      const fxProxy = 'https://api.allorigins.win/get?url=' + encodeURIComponent(fxUrl);
+      const fxR = await fetch(fxProxy);
+      const fxRaw = await fxR.json();
+      const fxData = JSON.parse(fxRaw.contents);
+      idrRate = fxData.chart.result[0].meta.regularMarketPrice;
+    } catch(e) {}
+
+    goldEl.textContent = '$' + price.toLocaleString('en-US', {maximumFractionDigits:0});
+    goldChgEl.textContent = (chgPct >= 0 ? '▲ +' : '▼ ') + Math.abs(chgPct).toFixed(2) + '%';
+    goldChgEl.className = 'comm-chg ' + (chgPct >= 0 ? 'up' : 'down');
+
+    const perGram = Math.round((price * idrRate) / 31.1035);
+    goldIdrEl.textContent = 'Rp' + perGram.toLocaleString('id-ID') + '/gram';
+    return;
+  } catch(e) {
+    console.warn('Yahoo Finance gold failed:', e);
+  }
+
+  // Try 2: CoinGecko PAXG (1 PAXG ≈ 1 troy oz gold, harga lebih tinggi ~$100 premium)
+  try {
+    const r = await fetch(
+      'https://api.coingecko.com/api/v3/simple/price?ids=pax-gold&vs_currencies=usd&include_24hr_change=true'
+    );
+    const d = await r.json();
+    if (d['pax-gold']?.usd) {
+      // PAXG harganya ~$100 lebih tinggi dari spot, koreksi manual
+      const approxSpot = Math.round(d['pax-gold'].usd * 0.97);
+      const chgPct = d['pax-gold'].usd_24h_change;
+      goldEl.textContent = '≈$' + approxSpot.toLocaleString('en-US');
+      goldChgEl.textContent = (chgPct >= 0 ? '▲ +' : '▼ ') + Math.abs(chgPct).toFixed(2) + '%';
+      goldChgEl.className = 'comm-chg ' + (chgPct >= 0 ? 'up' : 'down');
+      const perGram = Math.round((approxSpot * 16835) / 31.1035);
+      goldIdrEl.textContent = 'Rp' + perGram.toLocaleString('id-ID') + '/gram';
+      return;
     }
   } catch(e) {
-    document.getElementById('val-gold').textContent = '≈ $3,100';
-    document.getElementById('gold-idr').textContent = '≈ Rp1.590.000/gram';
-    document.getElementById('chg-gold').textContent = 'offline · approx';
-    console.warn('Gold fetch failed:', e);
+    console.warn('PAXG fallback failed:', e);
   }
+
+  // Try 3: Static fallback — jangan biarkan loading terus
+  goldEl.textContent = '≈ $3,050';
+  goldChgEl.textContent = '⚠ API offline';
+  goldChgEl.style.color = 'var(--gray)';
+  goldIdrEl.textContent = '≈ Rp1.560.000/gram';
 }
 
 /* ── IDX & COMMODITY DATA ── */
@@ -726,10 +771,12 @@ function renderNews() {
 
 /* ── INIT ── */
 fetchMarketData();
+fetchGoldPrice();
 renderNews();
 
 // Refresh setiap 60 detik
 setInterval(fetchMarketData, 60000);
+setInterval(fetchGoldPrice, 120000); // gold setiap 2 menit
 </script>
 </body>
 </html>
