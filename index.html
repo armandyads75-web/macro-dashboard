@@ -406,7 +406,7 @@
   <!-- ── MAIN GRID: CHART + CALENDAR ── -->
   <div class="main-grid">
     <div class="chart-area">
-      <iframe src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_main&symbol=IDX%3ACOMPOSITE&interval=D&hidesidetoolbar=0&hidetoptoolbar=0&symboledit=1&saveimage=1&toolbarbg=0d1117&theme=dark&style=1&timezone=Asia%2FJakarta&studies=%5B%22MASimple%4020%22%2C%22Volume%40tv-basicstudies%22%5D&locale=en"></iframe>
+      <iframe src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_main&symbol=IDX%3ACOMPOSITE&interval=D&hidesidetoolbar=0&hidetoptoolbar=0&symboledit=1&saveimage=1&toolbarbg=0d1117&theme=dark&style=1&timezone=Asia%2FJakarta&range=6M&studies=%5B%22MASimple%4020%22%2C%22Volume%40tv-basicstudies%22%5D&locale=en"></iframe>
     </div>
 
     <div class="right-col">
@@ -480,26 +480,25 @@
         <span class="panel-badge delay">⚠ 15m Delay</span>
       </div>
       <div class="comm-grid">
-        <div class="comm-item" style="display:flex;flex-direction:column;justify-content:center;">
-          <span class="comm-name">GOLD</span>
-          <span class="comm-sub" style="margin-bottom:6px">XAU/USD · Spot $/oz</span>
-          <span class="comm-val" id="val-gold">loading...</span>
-          <span class="comm-chg" id="chg-gold" style="color:var(--gray)">—</span>
-          <span style="font-size:9px;color:var(--text-dim);margin-top:4px;display:block" id="gold-idr">Rp —/gram</span>
+        <div class="comm-item" style="padding:0;overflow:hidden;display:flex;flex-direction:column;">
+          <span class="comm-name" style="padding:8px 10px 2px;display:block">GOLD</span>
+          <span class="comm-sub" style="padding:0 10px 0;display:block">XAU/USD · Spot Real-time</span>
+          <iframe src="https://s.tradingview.com/embed-widget/mini-symbol-overview/?locale=en#%7B%22symbol%22%3A%22OANDA%3AXAUUSD%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%22%2C%22dateRange%22%3A%221M%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22autosize%22%3Atrue%2C%22noTimeScale%22%3Atrue%7D"
+            style="width:100%;height:100px;border:none;" allowtransparency="true" scrolling="no"></iframe>
         </div>
         <div class="comm-item" style="display:flex;flex-direction:column;justify-content:center;">
           <span class="comm-name">COAL</span>
           <span class="comm-sub" style="margin-bottom:6px">NEWC · $/MT</span>
           <span class="comm-val">$104.73</span>
           <span class="comm-chg up">+8.32% MoM</span>
-          <span style="font-size:9px;color:var(--text-dim);margin-top:4px;display:block">Newcastle Export · update bulanan</span>
+          <span style="font-size:9px;color:var(--gold);margin-top:4px;display:block">⚠ Monthly update · NEWC</span>
         </div>
         <div class="comm-item" style="display:flex;flex-direction:column;justify-content:center;">
           <span class="comm-name" style="color:var(--gray-lt)">NICKEL</span>
           <span class="comm-sub" style="margin-bottom:6px">LME · $/MT</span>
           <span class="comm-val" id="val-nickel">$15,820</span>
           <span class="comm-chg down" id="chg-nickel">-4.37% MoM</span>
-          <span style="font-size:9px;color:var(--text-dim);margin-top:4px;display:block">London Metal Exchange</span>
+          <span style="font-size:9px;color:var(--gold);margin-top:4px;display:block">⚠ Monthly update · LME</span>
         </div>
       </div>
       <!-- Mini TradingView Commodity Chart -->
@@ -673,7 +672,7 @@ async function fetchMarketData() {
   }
 
   // GOLD via Yahoo Finance (GC=F = Gold Futures) proxied through allorigins
-  fetchGoldPrice();
+  
 }
 
 async function fetchGoldPrice() {
@@ -787,12 +786,10 @@ function renderNews() {
 
 /* ── INIT ── */
 fetchMarketData();
-fetchGoldPrice();
 renderNews();
 
 // Refresh setiap 60 detik
 setInterval(fetchMarketData, 60000);
-setInterval(fetchGoldPrice, 120000); // gold setiap 2 menit
 </script>
 </body>
 </html>
