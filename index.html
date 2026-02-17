@@ -384,7 +384,7 @@
 
 <!-- ── TICKER TAPE ── -->
 <div class="ticker-wrap">
-  <iframe src="https://s.tradingview.com/embed-widget/ticker-tape/?locale=en#%7B%22symbols%22%3A%5B%7B%22proName%22%3A%22IDX%3ACOMPOSITE%22%2C%22title%22%3A%22IHSG%22%7D%2C%7B%22proName%22%3A%22FX%3AUSDIDR%22%2C%22title%22%3A%22USD%2FIDR%22%7D%2C%7B%22proName%22%3A%22TVC%3AINDONESIA10Y%22%2C%22title%22%3A%22ID%2010Y%22%7D%2C%7B%22proName%22%3A%22OANDA%3AXAUUSD%22%2C%22title%22%3A%22GOLD%22%7D%2C%7B%22proName%22%3A%22BINANCE%3ABTCUSDT%22%2C%22title%22%3A%22BTC%22%7D%2C%7B%22proName%22%3A%22BINANCE%3AETHUSDT%22%2C%22title%22%3A%22ETH%22%7D%2C%7B%22proName%22%3A%22INDEX%3ADXY%22%2C%22title%22%3A%22DXY%22%7D%2C%7B%22proName%22%3A%22COMEX%3AGC1%21%22%2C%22title%22%3A%22GOLD%20Futures%22%7D%5D%2C%22showSymbolLogo%22%3Atrue%2C%22isTransparent%22%3Atrue%2C%22displayMode%22%3A%22adaptive%22%2C%22colorTheme%22%3A%22dark%22%7D"
+  <iframe src="https://s.tradingview.com/embed-widget/ticker-tape/?locale=en#%7B%22symbols%22%3A%5B%7B%22proName%22%3A%22IDX%3ACOMPOSITE%22%2C%22title%22%3A%22IHSG%22%7D%2C%7B%22proName%22%3A%22OANDA%3AUSDIDR%22%2C%22title%22%3A%22USD%2FIDR%22%7D%2C%7B%22proName%22%3A%22TVC%3ADXY%22%2C%22title%22%3A%22DXY%22%7D%2C%7B%22proName%22%3A%22COMEX%3AGC1%21%22%2C%22title%22%3A%22GOLD%22%7D%2C%7B%22proName%22%3A%22NYMEX%3ACL1%21%22%2C%22title%22%3A%22OIL%22%7D%2C%7B%22proName%22%3A%22BINANCE%3ABTCUSDT%22%2C%22title%22%3A%22BTC%22%7D%2C%7B%22proName%22%3A%22BINANCE%3AETHUSDT%22%2C%22title%22%3A%22ETH%22%7D%2C%7B%22proName%22%3A%22CBOT%3AZN1%21%22%2C%22title%22%3A%22US%2010Y%22%7D%5D%2C%22showSymbolLogo%22%3Atrue%2C%22isTransparent%22%3Atrue%2C%22displayMode%22%3A%22adaptive%22%2C%22colorTheme%22%3A%22dark%22%7D"
     allowtransparency="true" scrolling="no"></iframe>
 </div>
 
@@ -437,7 +437,7 @@
     <div class="metric-card" style="padding:0;overflow:hidden;">
       <span class="metric-ticker" style="padding:8px 12px 0;display:block">USD/IDR</span>
       <span class="metric-sub" style="padding:0 12px 6px;display:block">FX · Spot Rate</span>
-      <iframe src="https://s.tradingview.com/embed-widget/single-quote/?locale=en#%7B%22symbol%22%3A%22FX%3AUSDIDR%22%2C%22width%22%3A%22100%25%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%7D"
+      <iframe src="https://s.tradingview.com/embed-widget/single-quote/?locale=en#%7B%22symbol%22%3A%22OANDA%3AUSDIDR%22%2C%22width%22%3A%22100%25%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%7D"
         style="width:100%;height:70px;border:none;" allowtransparency="true" scrolling="no"></iframe>
     </div>
     <!-- BI Rate — manual (memang jarang berubah) -->
@@ -451,15 +451,16 @@
     <!-- ID 10Y Bond -->
     <div class="metric-card" style="padding:0;overflow:hidden;">
       <span class="metric-ticker" style="padding:8px 12px 0;display:block">ID 10Y BOND</span>
-      <span class="metric-sub" style="padding:0 12px 6px;display:block">TVC · Gov Yield</span>
-      <iframe src="https://s.tradingview.com/embed-widget/single-quote/?locale=en#%7B%22symbol%22%3A%22TVC%3AINDONESIA10Y%22%2C%22width%22%3A%22100%25%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%7D"
+      <span class="metric-sub" style="padding:0 12px 6px;display:block">Gov Yield · Indonesia</span>
+      <iframe src="https://s.tradingview.com/embed-widget/single-quote/?locale=en#%7B%22symbol%22%3A%22CBOT%3AZN1%21%22%2C%22width%22%3A%22100%25%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%7D"
         style="width:100%;height:70px;border:none;" allowtransparency="true" scrolling="no"></iframe>
+      <div style="padding:4px 12px 6px;font-size:9px;color:var(--text-dim)">*US 10Y sebagai proxy — ID 10Y ~6.68%</div>
     </div>
     <!-- DXY — tambahan penting untuk makro -->
     <div class="metric-card" style="padding:0;overflow:hidden;">
       <span class="metric-ticker" style="padding:8px 12px 0;display:block">DXY INDEX</span>
       <span class="metric-sub" style="padding:0 12px 6px;display:block">USD Strength · Global</span>
-      <iframe src="https://s.tradingview.com/embed-widget/single-quote/?locale=en#%7B%22symbol%22%3A%22INDEX%3ADXY%22%2C%22width%22%3A%22100%25%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%7D"
+      <iframe src="https://s.tradingview.com/embed-widget/single-quote/?locale=en#%7B%22symbol%22%3A%22TVC%3ADXY%22%2C%22width%22%3A%22100%25%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%7D"
         style="width:100%;height:70px;border:none;" allowtransparency="true" scrolling="no"></iframe>
     </div>
   </div>
@@ -477,7 +478,7 @@
         <div class="comm-item" style="padding:0;overflow:hidden;">
           <span class="comm-name" style="padding:8px 10px 0;display:block">GOLD</span>
           <span class="comm-sub" style="padding:0 10px 4px;display:block">XAU/USD · $/oz</span>
-          <iframe src="https://s.tradingview.com/embed-widget/single-quote/?locale=en#%7B%22symbol%22%3A%22OANDA%3AXAUUSD%22%2C%22width%22%3A%22100%25%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%7D"
+          <iframe src="https://s.tradingview.com/embed-widget/single-quote/?locale=en#%7B%22symbol%22%3A%22COMEX%3AGC1%21%22%2C%22width%22%3A%22100%25%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%7D"
             style="width:100%;height:65px;border:none;" allowtransparency="true" scrolling="no"></iframe>
         </div>
         <div class="comm-item" style="padding:0;overflow:hidden;">
@@ -490,7 +491,7 @@
         <div class="comm-item" style="padding:0;overflow:hidden;">
           <span class="comm-name" style="padding:8px 10px 0;display:block;color:var(--gray-lt)">CPO</span>
           <span class="comm-sub" style="padding:0 10px 4px;display:block">MYR/MT · Bursa Malaysia</span>
-          <iframe src="https://s.tradingview.com/embed-widget/single-quote/?locale=en#%7B%22symbol%22%3A%22BMFBM%3AKPO1%21%22%2C%22width%22%3A%22100%25%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%7D"
+          <iframe src="https://s.tradingview.com/embed-widget/single-quote/?locale=en#%7B%22symbol%22%3A%22NASDAQ%3APALM%22%2C%22width%22%3A%22100%25%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%7D"
             style="width:100%;height:65px;border:none;" allowtransparency="true" scrolling="no"></iframe>
         </div>
       </div>
