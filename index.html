@@ -406,7 +406,7 @@
   <!-- ── MAIN GRID: CHART + CALENDAR ── -->
   <div class="main-grid">
     <div class="chart-area">
-      <iframe src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_main&symbol=IDX%3ACOMPOSITE&interval=D&hidesidetoolbar=0&hidetoptoolbar=0&symboledit=1&saveimage=1&toolbarbg=0d1117&theme=dark&style=1&timezone=Asia%2FJakarta&studies=%5B%22MASimple%4020%22%2C%22Volume%40tv-basicstudies%22%5D&locale=en" id="ihsg-chart"></iframe>
+      <iframe src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_main&symbol=IDX%3ACOMPOSITE&interval=W&hidesidetoolbar=0&hidetoptoolbar=0&symboledit=1&saveimage=1&toolbarbg=0d1117&theme=dark&style=1&timezone=Asia%2FJakarta&studies=%5B%22MASimple%4020%22%2C%22Volume%40tv-basicstudies%22%5D&locale=en" id="ihsg-chart"></iframe>
     </div>
 
     <div class="right-col">
@@ -480,11 +480,13 @@
         <span class="panel-badge delay">⚠ 15m Delay</span>
       </div>
       <div class="comm-grid">
-        <div class="comm-item" style="padding:0;overflow:hidden;display:flex;flex-direction:column;">
-          <span class="comm-name" style="padding:8px 10px 2px;display:block">GOLD</span>
-          <span class="comm-sub" style="padding:0 10px 0;display:block">XAU/USD · Spot Real-time</span>
-          <iframe src="https://s.tradingview.com/embed-widget/mini-symbol-overview/?locale=en#%7B%22symbol%22%3A%22TVC%3AGOLD%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%22%2C%22dateRange%22%3A%221M%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22autosize%22%3Atrue%2C%22noTimeScale%22%3Atrue%7D"
-            style="width:100%;height:100px;border:none;" allowtransparency="true" scrolling="no"></iframe>
+        <div class="comm-item" style="display:flex;flex-direction:column;justify-content:center;">
+          <span class="comm-name">GOLD</span>
+          <span class="comm-sub" style="margin-bottom:6px">XAU/USD · $/troy oz</span>
+          <span class="comm-val" id="val-gold" style="font-size:18px">$2,934</span>
+          <span class="comm-chg up" id="chg-gold">▲ +0.43%</span>
+          <span style="font-size:9px;color:var(--text-dim);margin-top:4px;display:block" id="gold-idr">Rp1.581.000/gram</span>
+          <span style="font-size:8px;color:var(--gold);margin-top:3px;display:block">⚠ Update mingguan</span>
         </div>
         <div class="comm-item" style="display:flex;flex-direction:column;justify-content:center;">
           <span class="comm-name">COAL</span>
@@ -671,80 +673,8 @@ async function fetchMarketData() {
   
 }
 
-async function fetchGoldPrice() {
-  const goldEl    = document.getElementById('val-gold');
-  const goldChgEl = document.getElementById('chg-gold');
-  const goldIdrEl = document.getElementById('gold-idr');
+// Gold: static card, update mingguan
 
-  const fmt = n => n.toLocaleString('en-US', {maximumFractionDigits:0});
-
-  // Try 1: Yahoo Finance GC=F via allorigins proxy
-  try {
-    const url   = 'https://query1.finance.yahoo.com/v8/finance/chart/GC%3DF?interval=1d&range=2d';
-    const proxy = 'https://api.allorigins.win/get?url=' + encodeURIComponent(url);
-    const r     = await fetch(proxy);
-    const raw   = await r.json();
-    const data  = JSON.parse(raw.contents);
-    const meta  = data.chart.result[0].meta;
-    const price = meta.regularMarketPrice;
-    const prev  = meta.previousClose;
-
-    // Sanity check: harga emas spot $1,500–$4,000
-    if (!price || price < 1500 || price > 4000) throw new Error('Price invalid: ' + price);
-
-    const chgPct = ((price - prev) / prev) * 100;
-
-    // USD/IDR live
-    let idrRate = 16835;
-    try {
-      const fxUrl   = 'https://query1.finance.yahoo.com/v8/finance/chart/IDR%3DX?interval=1d&range=1d';
-      const fxProxy = 'https://api.allorigins.win/get?url=' + encodeURIComponent(fxUrl);
-      const fxR     = await fetch(fxProxy);
-      const fxRaw   = await fxR.json();
-      const fxData  = JSON.parse(fxRaw.contents);
-      const rate    = fxData.chart.result[0].meta.regularMarketPrice;
-      if (rate > 10000 && rate < 25000) idrRate = rate;
-    } catch(e) {}
-
-    goldEl.textContent      = '$' + fmt(price);
-    goldChgEl.textContent   = (chgPct >= 0 ? '▲ +' : '▼ ') + Math.abs(chgPct).toFixed(2) + '%';
-    goldChgEl.className     = 'comm-chg ' + (chgPct >= 0 ? 'up' : 'down');
-    const perGram = Math.round((price * idrRate) / 31.1035);
-    goldIdrEl.textContent   = 'Rp' + perGram.toLocaleString('id-ID') + '/gram';
-    return;
-  } catch(e) {
-    console.warn('Yahoo Finance gold Try1 failed:', e.message);
-  }
-
-  // Try 2: Yahoo Finance query2 server
-  try {
-    const url2   = 'https://query2.finance.yahoo.com/v8/finance/chart/GC%3DF?interval=1d&range=2d';
-    const proxy2 = 'https://api.allorigins.win/get?url=' + encodeURIComponent(url2);
-    const r2     = await fetch(proxy2);
-    const raw2   = await r2.json();
-    const data2  = JSON.parse(raw2.contents);
-    const price2 = data2.chart.result[0].meta.regularMarketPrice;
-    const prev2  = data2.chart.result[0].meta.previousClose;
-
-    if (!price2 || price2 < 1500 || price2 > 4000) throw new Error('Price invalid: ' + price2);
-
-    const chg2 = ((price2 - prev2) / prev2) * 100;
-    goldEl.textContent    = '$' + fmt(price2);
-    goldChgEl.textContent = (chg2 >= 0 ? '▲ +' : '▼ ') + Math.abs(chg2).toFixed(2) + '%';
-    goldChgEl.className   = 'comm-chg ' + (chg2 >= 0 ? 'up' : 'down');
-    const gram2 = Math.round((price2 * 16835) / 31.1035);
-    goldIdrEl.textContent = 'Rp' + gram2.toLocaleString('id-ID') + '/gram';
-    return;
-  } catch(e) {
-    console.warn('Yahoo Finance gold Try2 failed:', e.message);
-  }
-
-  // Final fallback — nilai realistis Feb 2026, tidak pernah "loading" terus
-  goldEl.textContent    = '~$2,930';
-  goldChgEl.textContent = '⚠ data offline';
-  goldChgEl.style.color = 'var(--gray-lt)';
-  goldIdrEl.textContent = '~Rp1.585.000/gram';
-}
 
 /* ── IDX & COMMODITY DATA ── */
 // IHSG, USD/IDR, Bond, Gold, CPO sekarang ditampilkan via TradingView
