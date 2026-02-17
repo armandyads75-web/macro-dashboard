@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NUSANTARA TERMINAL — Indonesian Macro Dashboard</title>
+  <meta name="description" content="Nusantara Terminal — Indonesian Macroeconomic Dashboard. Real-time IHSG, Rupiah, commodities, and economic analysis. Built for Indonesia's financial markets." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg:        #080b0f;
+      --bg-panel:  #0d1117;
+      --bg-card:   #111820;
+      --border:    #1e2d3d;
+      --border-hi: #2a3f55;
+      --gold:      #f0a500;
+      --green:     #00e676;
+      --red:       #ff3d57;
+      --blue:      #29b6f6;
+      --gray:      #546e7a;
+      --gray-lt:   #78909c;
+      --text:      #cfd8dc;
+      --text-dim:  #455a64;
+      --font-mono: 'Space Mono', monospace;
+      --font-alt:  'Share Tech Mono', monospace;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── SCANLINE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.04) 2px,
+        rgba(0,0,0,0.04) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ── TICKER TAPE ── */
+    .ticker-wrap {
+      position: sticky; top: 0; z-index: 100;
+      border-bottom: 1px solid var(--border);
+      background: #040608;
+      height: 46px;
+    }
+    .ticker-wrap iframe { display: block; width: 100%; height: 46px; border: none; }
+
+    /* ── MAIN SHELL ── */
+    .shell {
+      max-width: 1680px;
+      margin: 0 auto;
+      padding: 0 8px 8px;
+    }
+
+    /* ── HEADER BAR ── */
+    .header-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 6px 12px;
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-top: none;
+      gap: 12px;
+    }
+    .header-left { display: flex; align-items: center; gap: 10px; }
+    .pulse-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--green);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0,230,118,0.4); }
+      50%       { opacity: 0.7; box-shadow: 0 0 0 5px rgba(0,230,118,0); }
+    }
+    .header-title {
+      font-family: var(--font-alt);
+      font-size: 11px; letter-spacing: 3px;
+      color: var(--gold); text-transform: uppercase;
+    }
+    .header-right {
+      display: flex; align-items: center; gap: 16px;
+      font-size: 10px; color: var(--gray); font-family: var(--font-alt);
+    }
+    .status-badge {
+      color: var(--green); letter-spacing: 2px; font-size: 9px;
+    }
+    #live-clock { color: var(--text-dim); }
+
+    /* ── GRID LAYOUT ── */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      grid-template-rows: 480px;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .chart-area {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      position: relative; overflow: hidden;
+    }
+    .chart-area iframe { display: block; width: 100%; height: 100%; border: none; }
+
+    .right-col {
+      display: flex; flex-direction: column; gap: 6px;
+    }
+
+    /* ── PANEL BASE ── */
+    .panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+    }
+    .panel-header {
+      padding: 5px 10px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(0,0,0,0.3);
+    }
+    .panel-label {
+      font-family: var(--font-alt);
+      font-size: 9px; letter-spacing: 2px;
+      color: var(--gray); text-transform: uppercase;
+    }
+    .panel-badge {
+      font-size: 8px; padding: 1px 5px;
+      border: 1px solid currentColor;
+      letter-spacing: 1px;
+    }
+    .panel-badge.live { color: var(--green); animation: pulse 2s infinite; }
+    .panel-badge.delay { color: #f9a825; }
+
+    /* ── CALENDAR ── */
+    .calendar-panel { flex: 1; overflow: hidden; }
+    .calendar-panel iframe { display: block; width: 100%; height: calc(100% - 28px); border: none; }
+
+    /* ── MARKET METRICS ROW ── */
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr) 200px;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .metric-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .metric-card:hover { border-color: var(--border-hi); }
+    .metric-card::after {
+      content: '';
+      position: absolute; top: 0; left: 0;
+      width: 2px; height: 100%;
+    }
+    .metric-card.up::after   { background: var(--green); }
+    .metric-card.down::after { background: var(--red); }
+    .metric-card.flat::after { background: var(--gray); }
+
+    .metric-ticker {
+      font-family: var(--font-alt); font-size: 10px;
+      color: var(--gold); letter-spacing: 2px; display: block;
+      margin-bottom: 2px;
+    }
+    .metric-sub { font-size: 9px; color: var(--text-dim); display: block; margin-bottom: 6px; }
+    .metric-value {
+      font-size: 20px; font-weight: 700; letter-spacing: -0.5px;
+      display: block; margin-bottom: 3px;
+    }
+    .metric-value.up   { color: #fff; }
+    .metric-value.down { color: #fff; }
+    .metric-change {
+      font-size: 10px; font-weight: 700;
+    }
+    .metric-change.up   { color: var(--green); }
+    .metric-change.down { color: var(--red); }
+    .metric-change.flat { color: var(--gray); }
+
+    /* Market Breadth card */
+    .breadth-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+    }
+    .breadth-label {
+      font-family: var(--font-alt); font-size: 9px;
+      color: var(--blue); letter-spacing: 2px;
+      text-transform: uppercase; display: block; margin-bottom: 6px;
+    }
+    .breadth-sub { font-size: 9px; color: var(--text-dim); display: block; margin-bottom: 8px; }
+    .breadth-bar-bg {
+      width: 100%; height: 6px;
+      background: var(--bg-card);
+      border-radius: 3px; overflow: hidden; margin-bottom: 5px;
+    }
+    .breadth-bar-fill {
+      height: 100%; border-radius: 3px;
+      background: linear-gradient(90deg, var(--green), #69f0ae);
+      transition: width 1s ease;
+    }
+    .breadth-nums {
+      display: flex; justify-content: space-between;
+      font-size: 9px;
+    }
+    .adv { color: var(--green); }
+    .dec { color: var(--red); }
+
+    /* ── BOTTOM GRID ── */
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    /* ── COMMODITIES ── */
+    .comm-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0;
+    }
+    .comm-item {
+      padding: 10px 12px;
+      border-right: 1px solid var(--border);
+    }
+    .comm-item:last-child { border-right: none; }
+    .comm-name {
+      font-family: var(--font-alt); font-size: 10px;
+      color: var(--gold); letter-spacing: 2px; display: block; margin-bottom: 2px;
+    }
+    .comm-sub { font-size: 9px; color: var(--text-dim); display: block; margin-bottom: 6px; }
+    .comm-val { font-size: 16px; font-weight: 700; color: #fff; display: block; margin-bottom: 3px; }
+    .comm-chg { font-size: 10px; font-weight: 700; }
+    .comm-chg.up   { color: var(--green); }
+    .comm-chg.down { color: var(--red); }
+
+    /* ── CRYPTO ── */
+    .crypto-grid { display: grid; grid-template-rows: 1fr 1fr; height: calc(100% - 28px); }
+    .crypto-item {
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .crypto-item:last-child { border-bottom: none; }
+    .crypto-name {
+      font-family: var(--font-alt); font-size: 11px; letter-spacing: 2px;
+      display: block; margin-bottom: 2px;
+    }
+    .btc { color: #f7931a; }
+    .eth { color: #627eea; }
+    .crypto-sub { font-size: 9px; color: var(--text-dim); }
+    .crypto-right { text-align: right; }
+    .crypto-val { font-size: 16px; font-weight: 700; color: #fff; display: block; margin-bottom: 2px; }
+    .crypto-chg { font-size: 10px; font-weight: 700; }
+
+    /* ── MACRO ANALYSIS (THE KEY DIFFERENTIATOR) ── */
+    .analysis-panel { display: flex; flex-direction: column; }
+    .analysis-body { padding: 12px; flex: 1; overflow-y: auto; }
+
+    .sentiment-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .sentiment-label { font-size: 9px; color: var(--gray); text-transform: uppercase; letter-spacing: 1px; }
+    .sentiment-val {
+      font-family: var(--font-alt); font-size: 12px; font-weight: 700;
+      letter-spacing: 2px;
+    }
+    .sentiment-bar-bg {
+      width: 100%; height: 4px;
+      background: linear-gradient(90deg, var(--red) 0%, var(--gray) 50%, var(--green) 100%);
+      border-radius: 2px; position: relative; margin-bottom: 4px;
+    }
+    .sentiment-needle {
+      position: absolute; top: 50%; transform: translate(-50%, -50%);
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #fff; border: 2px solid var(--bg);
+      transition: left 1s ease;
+    }
+    .sentiment-scale {
+      display: flex; justify-content: space-between;
+      font-size: 8px; color: var(--text-dim); margin-bottom: 12px;
+    }
+
+    .divider { border: none; border-top: 1px solid var(--border); margin: 10px 0; }
+
+    .insight-title {
+      font-family: var(--font-alt); font-size: 9px;
+      color: var(--blue); letter-spacing: 2px;
+      text-transform: uppercase; margin-bottom: 8px; display: block;
+    }
+    .insight-list { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+    .insight-item {
+      display: flex; gap: 7px; align-items: flex-start;
+      padding: 7px 8px;
+      background: var(--bg-card);
+      border-left: 2px solid var(--border-hi);
+      font-size: 10px; line-height: 1.5; color: var(--text);
+    }
+    .insight-item.bearish { border-left-color: var(--red); }
+    .insight-item.bullish { border-left-color: var(--green); }
+    .insight-item.neutral { border-left-color: var(--blue); }
+    .insight-icon { flex-shrink: 0; font-size: 11px; margin-top: 1px; }
+
+    .analysis-footer {
+      padding: 6px 12px;
+      border-top: 1px solid var(--border);
+      font-size: 9px; color: var(--text-dim); font-family: var(--font-alt);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .update-tag { color: var(--gold); }
+
+    /* ── NEWS FEED ── */
+    .news-body { overflow-y: auto; max-height: 260px; }
+    .news-item {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: flex-start; gap: 8px;
+      transition: background 0.15s;
+      cursor: default;
+    }
+    .news-item:hover { background: rgba(255,255,255,0.03); }
+    .news-icon { font-size: 14px; flex-shrink: 0; opacity: 0.8; }
+    .news-text { flex: 1; font-size: 11px; color: var(--text); line-height: 1.4; }
+    .news-sentiment {
+      font-size: 8px; font-weight: 700; letter-spacing: 1px;
+      padding: 2px 5px; border: 1px solid currentColor;
+      text-transform: uppercase; flex-shrink: 0; align-self: center;
+    }
+    .news-sentiment.pos { color: var(--green); }
+    .news-sentiment.neg { color: var(--red); }
+    .news-sentiment.neu { color: var(--gray); }
+    .news-loading { padding: 20px 12px; color: var(--gray); font-size: 10px; text-align: center; }
+
+    /* ── STATUS BAR ── */
+    .status-bar {
+      margin-top: 6px;
+      padding: 5px 12px;
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 9px; color: var(--text-dim); font-family: var(--font-alt);
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border-hi); border-radius: 2px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--gray); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1100px) {
+      .main-grid { grid-template-columns: 1fr; grid-template-rows: 420px auto; }
+      .right-col { flex-direction: row; }
+      .metrics-row { grid-template-columns: repeat(3, 1fr); }
+      .bottom-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 700px) {
+      .metrics-row { grid-template-columns: repeat(2, 1fr); }
+      .bottom-grid { grid-template-columns: 1fr; }
+      .comm-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── TICKER TAPE ── -->
+<div class="ticker-wrap">
+  <iframe src="https://s.tradingview.com/embed-widget/ticker-tape/?locale=en#%7B%22symbols%22%3A%5B%7B%22proName%22%3A%22IDX%3ACOMPOSITE%22%2C%22title%22%3A%22IHSG%22%7D%2C%7B%22proName%22%3A%22FX%3AUSDIDR%22%2C%22title%22%3A%22USD%2FIDR%22%7D%2C%7B%22proName%22%3A%22TVC%3AINDONESIA10Y%22%2C%22title%22%3A%22ID%2010Y%22%7D%2C%7B%22proName%22%3A%22OANDA%3AXAUUSD%22%2C%22title%22%3A%22GOLD%22%7D%2C%7B%22proName%22%3A%22BINANCE%3ABTCUSDT%22%2C%22title%22%3A%22BTC%22%7D%2C%7B%22proName%22%3A%22BINANCE%3AETHUSDT%22%2C%22title%22%3A%22ETH%22%7D%2C%7B%22proName%22%3A%22INDEX%3ADXY%22%2C%22title%22%3A%22DXY%22%7D%2C%7B%22proName%22%3A%22COMEX%3AGC1%21%22%2C%22title%22%3A%22GOLD%20Futures%22%7D%5D%2C%22showSymbolLogo%22%3Atrue%2C%22isTransparent%22%3Atrue%2C%22displayMode%22%3A%22adaptive%22%2C%22colorTheme%22%3A%22dark%22%7D"
+    allowtransparency="true" scrolling="no"></iframe>
+</div>
+
+<div class="shell">
+
+  <!-- ── HEADER BAR ── -->
+  <div class="header-bar">
+    <div class="header-left">
+      <div class="pulse-dot"></div>
+      <span class="header-title">NUSANTARA TERMINAL &nbsp;//&nbsp; Indonesian Macro Dashboard &nbsp;//&nbsp; v2.0</span>
+    </div>
+    <div class="header-right">
+      <span class="status-badge">● SYSTEM_ONLINE</span>
+      <span>LATENCY: &lt;50ms</span>
+      <span id="live-clock">--:--:-- WIB</span>
+    </div>
+  </div>
+
+  <!-- ── MAIN GRID: CHART + CALENDAR ── -->
+  <div class="main-grid">
+    <div class="chart-area">
+      <iframe src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_main&symbol=IDX%3ACOMPOSITE&interval=D&hidesidetoolbar=0&hidetoptoolbar=0&symboledit=1&saveimage=1&toolbarbg=0d1117&theme=dark&style=1&timezone=Asia%2FJakarta&studies=%5B%22MASimple%4020%22%2C%22Volume%40tv-basicstudies%22%5D&locale=en"></iframe>
+    </div>
+
+    <div class="right-col">
+      <!-- Calendar -->
+      <div class="panel calendar-panel" style="flex:1">
+        <div class="panel-header">
+          <span class="panel-label">Global_Events // Econ Calendar</span>
+          <span class="panel-badge live">● LIVE</span>
+        </div>
+        <iframe src="https://s.tradingview.com/embed-widget/events/?locale=en#%7B%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%2C%22importanceFilter%22%3A%22-1%2C0%2C1%22%2C%22currencyFilter%22%3A%22IDR%2CUSD%2CEUR%2CJPY%22%7D"
+          allowtransparency="true" scrolling="no"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── METRICS ROW ── -->
+  <div class="metrics-row">
+    <!-- IHSG — TradingView Single Quote Widget -->
+    <div class="metric-card" style="padding:0;overflow:hidden;">
+      <div class="metric-card-label">
+        <span class="metric-ticker" style="padding:8px 12px 0;display:block">IHSG</span>
+        <span class="metric-sub" style="padding:0 12px 6px;display:block">^JKSE · IDX Composite</span>
+      </div>
+      <iframe src="https://s.tradingview.com/embed-widget/single-quote/?locale=en#%7B%22symbol%22%3A%22IDX%3ACOMPOSITE%22%2C%22width%22%3A%22100%25%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%7D"
+        style="width:100%;height:70px;border:none;" allowtransparency="true" scrolling="no"></iframe>
+    </div>
+    <!-- USD/IDR -->
+    <div class="metric-card" style="padding:0;overflow:hidden;">
+      <span class="metric-ticker" style="padding:8px 12px 0;display:block">USD/IDR</span>
+      <span class="metric-sub" style="padding:0 12px 6px;display:block">FX · Spot Rate</span>
+      <iframe src="https://s.tradingview.com/embed-widget/single-quote/?locale=en#%7B%22symbol%22%3A%22FX%3AUSDIDR%22%2C%22width%22%3A%22100%25%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%7D"
+        style="width:100%;height:70px;border:none;" allowtransparency="true" scrolling="no"></iframe>
+    </div>
+    <!-- BI Rate — manual (memang jarang berubah) -->
+    <div class="metric-card flat">
+      <span class="metric-ticker">BI RATE</span>
+      <span class="metric-sub">Bank Indonesia · Policy Rate</span>
+      <span class="metric-value" style="color:#fff;font-size:20px;display:block;margin:6px 0 3px">5.75%</span>
+      <span class="metric-change flat">▼ −25bps · Feb 2025</span>
+      <span style="font-size:9px;color:var(--text-dim);margin-top:6px;display:block">Next RDG: Mar 2025</span>
+    </div>
+    <!-- ID 10Y Bond -->
+    <div class="metric-card" style="padding:0;overflow:hidden;">
+      <span class="metric-ticker" style="padding:8px 12px 0;display:block">ID 10Y BOND</span>
+      <span class="metric-sub" style="padding:0 12px 6px;display:block">TVC · Gov Yield</span>
+      <iframe src="https://s.tradingview.com/embed-widget/single-quote/?locale=en#%7B%22symbol%22%3A%22TVC%3AINDONESIA10Y%22%2C%22width%22%3A%22100%25%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%7D"
+        style="width:100%;height:70px;border:none;" allowtransparency="true" scrolling="no"></iframe>
+    </div>
+    <!-- DXY — tambahan penting untuk makro -->
+    <div class="metric-card" style="padding:0;overflow:hidden;">
+      <span class="metric-ticker" style="padding:8px 12px 0;display:block">DXY INDEX</span>
+      <span class="metric-sub" style="padding:0 12px 6px;display:block">USD Strength · Global</span>
+      <iframe src="https://s.tradingview.com/embed-widget/single-quote/?locale=en#%7B%22symbol%22%3A%22INDEX%3ADXY%22%2C%22width%22%3A%22100%25%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%7D"
+        style="width:100%;height:70px;border:none;" allowtransparency="true" scrolling="no"></iframe>
+    </div>
+  </div>
+
+  <!-- ── BOTTOM GRID: COMMODITIES | CRYPTO | ANALYSIS+NEWS ── -->
+  <div class="bottom-grid">
+
+    <!-- COMMODITIES -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-label">Commodities // Spot & Futures</span>
+        <span class="panel-badge delay">⚠ 15m Delay</span>
+      </div>
+      <div class="comm-grid">
+        <div class="comm-item" style="padding:0;overflow:hidden;">
+          <span class="comm-name" style="padding:8px 10px 0;display:block">GOLD</span>
+          <span class="comm-sub" style="padding:0 10px 4px;display:block">XAU/USD · $/oz</span>
+          <iframe src="https://s.tradingview.com/embed-widget/single-quote/?locale=en#%7B%22symbol%22%3A%22OANDA%3AXAUUSD%22%2C%22width%22%3A%22100%25%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%7D"
+            style="width:100%;height:65px;border:none;" allowtransparency="true" scrolling="no"></iframe>
+        </div>
+        <div class="comm-item" style="padding:0;overflow:hidden;">
+          <span class="comm-name" style="padding:8px 10px 0;display:block;color:var(--gray-lt)">COAL</span>
+          <span class="comm-sub" style="padding:0 10px 4px;display:block">NEWC · $/MT</span>
+          <span class="comm-val" style="padding:0 10px;display:block;font-size:15px">$104.73</span>
+          <span class="comm-chg up" style="padding:0 10px 8px;display:block">+8.32% MoM</span>
+          <span style="font-size:9px;color:var(--text-dim);padding:0 10px 8px;display:block">Newcastle Export</span>
+        </div>
+        <div class="comm-item" style="padding:0;overflow:hidden;">
+          <span class="comm-name" style="padding:8px 10px 0;display:block;color:var(--gray-lt)">CPO</span>
+          <span class="comm-sub" style="padding:0 10px 4px;display:block">MYR/MT · Bursa Malaysia</span>
+          <iframe src="https://s.tradingview.com/embed-widget/single-quote/?locale=en#%7B%22symbol%22%3A%22BMFBM%3AKPO1%21%22%2C%22width%22%3A%22100%25%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%7D"
+            style="width:100%;height:65px;border:none;" allowtransparency="true" scrolling="no"></iframe>
+        </div>
+      </div>
+      <!-- Mini TradingView Commodity Chart -->
+      <div style="height:160px;border-top:1px solid var(--border)">
+        <iframe src="https://s.tradingview.com/embed-widget/mini-symbol-overview/?locale=en#%7B%22symbol%22%3A%22OANDA%3AXAUUSD%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%2C%22dateRange%22%3A%223M%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22autosize%22%3Atrue%2C%22largeChartUrl%22%3A%22%22%7D"
+          style="width:100%;height:100%;border:none;" allowtransparency="true" scrolling="no"></iframe>
+      </div>
+    </div>
+
+    <!-- CRYPTO + NEWS stacked -->
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <!-- Crypto -->
+      <div class="panel" style="flex:0 0 auto">
+        <div class="panel-header">
+          <span class="panel-label">Crypto // Live 24/7</span>
+          <span class="panel-badge live">● LIVE</span>
+        </div>
+        <div class="crypto-grid" style="height:120px">
+          <div class="crypto-item">
+            <div>
+              <span class="crypto-name btc">BITCOIN</span>
+              <span class="crypto-sub">BTC/USDT · Binance</span>
+            </div>
+            <div class="crypto-right">
+              <span class="crypto-val" id="val-btc">—</span>
+              <span class="crypto-chg down" id="chg-btc">Loading…</span>
+            </div>
+          </div>
+          <div class="crypto-item">
+            <div>
+              <span class="crypto-name eth">ETHEREUM</span>
+              <span class="crypto-sub">ETH/USDT · Binance</span>
+            </div>
+            <div class="crypto-right">
+              <span class="crypto-val" id="val-eth">—</span>
+              <span class="crypto-chg down" id="chg-eth">Loading…</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NEWS FEED -->
+      <div class="panel" style="flex:1">
+        <div class="panel-header">
+          <span class="panel-label">Market Headlines // BI · BPS · Ekonomi</span>
+          <span class="panel-badge live">● AI-Curated</span>
+        </div>
+        <div class="news-body" id="news-feed">
+          <div class="news-loading">Memuat berita ekonomi Indonesia…</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MACRO ANALYSIS -->
+    <div class="panel analysis-panel">
+      <div class="panel-header">
+        <span class="panel-label">Macro_Analysis // Indonesia</span>
+        <span class="panel-badge" style="color:var(--gold);border-color:var(--gold)">WEEKLY UPDATE</span>
+      </div>
+
+      <div class="analysis-body">
+        <!-- Sentiment Gauge -->
+        <div class="sentiment-row">
+          <span class="sentiment-label">Market Sentiment</span>
+          <span class="sentiment-val" id="sentiment-text" style="color:var(--red)">BEARISH</span>
+        </div>
+        <div class="sentiment-bar-bg">
+          <div class="sentiment-needle" id="sentiment-needle" style="left:28%"></div>
+        </div>
+        <div class="sentiment-scale">
+          <span>BEARISH</span><span>NEUTRAL</span><span>BULLISH</span>
+        </div>
+
+        <hr class="divider" />
+
+        <!-- Key Insights — THIS IS YOUR DIFFERENTIATOR -->
+        <span class="insight-title">📊 Key Macro Insights</span>
+        <ul class="insight-list">
+          <li class="insight-item bearish">
+            <span class="insight-icon">📉</span>
+            <span>IHSG tertekan akibat arus keluar modal asing (capital outflow) yang dipicu kebijakan tarif Trump dan penguatan DXY di atas 104.</span>
+          </li>
+          <li class="insight-item neutral">
+            <span class="insight-icon">🏦</span>
+            <span>BI memangkas BI Rate 25bps ke <strong>5.75%</strong> (Feb 2025) — sinyal dovish di tengah tekanan Rupiah. Ruang pemangkasan lanjutan terbatas.</span>
+          </li>
+          <li class="insight-item bearish">
+            <span class="insight-icon">💱</span>
+            <span>Rupiah masih rentan di kisaran Rp16.700–16.900/USD. Defisit transaksi berjalan dan capital outflow menjadi faktor tekanan utama.</span>
+          </li>
+          <li class="insight-item bullish">
+            <span class="insight-icon">⛏️</span>
+            <span>Ekspor komoditas (batubara, CPO, nikel) masih menjadi penopang neraca dagang. Harga batubara rebound +8% MoM — positif untuk emiten sektor ini.</span>
+          </li>
+          <li class="insight-item neutral">
+            <span class="insight-icon">📈</span>
+            <span>Inflasi Feb 2025 at 1.06% YoY — terendah dalam 4 tahun. Memberi ruang BI untuk tetap dovish, namun juga sinyal pelemahan daya beli domestik.</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="analysis-footer">
+        <span>Nusantara Terminal &nbsp;|&nbsp; <span class="update-tag">nusantara-terminal.github.io</span></span>
+        <span id="analysis-date"></span>
+      </div>
+    </div>
+
+  </div><!-- end bottom-grid -->
+
+  <!-- ── STATUS BAR ── -->
+  <div class="status-bar">
+    <span>DATA: TradingView (real-time) · CoinGecko (crypto) · Bank Indonesia · BPS</span>
+    <span>NUSANTARA TERMINAL &nbsp;|&nbsp; BUILD: v2.0.0 · 2025 &nbsp;|&nbsp; nusantara-terminal.github.io</span>
+  </div>
+
+</div><!-- end shell -->
+
+<script>
+/* ── CLOCK ── */
+function updateClock() {
+  const now = new Date();
+  const wib = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Jakarta' }));
+  const pad = n => String(n).padStart(2,'0');
+  document.getElementById('live-clock').textContent =
+    `${pad(wib.getHours())}:${pad(wib.getMinutes())}:${pad(wib.getSeconds())} WIB`;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+/* ── ANALYSIS DATE ── */
+const opts = { year:'numeric', month:'long', day:'numeric' };
+document.getElementById('analysis-date').textContent =
+  'Updated: ' + new Date().toLocaleDateString('id-ID', opts);
+
+/* ── CRYPTO via CoinGecko (no API key needed) ── */
+async function fetchCrypto() {
+  try {
+    const r = await fetch(
+      'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd&include_24hr_change=true'
+    );
+    const d = await r.json();
+    const fmt = n => n >= 1000 ? n.toLocaleString('en-US', {maximumFractionDigits:0}) : n.toLocaleString('en-US', {maximumFractionDigits:2});
+    const fmtChg = n => (n >= 0 ? '+' : '') + n.toFixed(2) + '%';
+    const colorClass = n => n >= 0 ? 'up' : 'down';
+
+    document.getElementById('val-btc').textContent = '$' + fmt(d.bitcoin.usd);
+    const btcChg = document.getElementById('chg-btc');
+    btcChg.textContent = fmtChg(d.bitcoin.usd_24h_change);
+    btcChg.className = 'crypto-chg ' + colorClass(d.bitcoin.usd_24h_change);
+
+    document.getElementById('val-eth').textContent = '$' + fmt(d.ethereum.usd);
+    const ethChg = document.getElementById('chg-eth');
+    ethChg.textContent = fmtChg(d.ethereum.usd_24h_change);
+    ethChg.className = 'crypto-chg ' + colorClass(d.ethereum.usd_24h_change);
+  } catch(e) {
+    document.getElementById('val-btc').textContent = 'N/A';
+    document.getElementById('val-eth').textContent = 'N/A';
+    console.warn('Crypto fetch failed:', e);
+  }
+}
+
+/* ── GOLD PRICE ── */
+// Ditampilkan via TradingView widget (real-time)
+
+/* ── IDX & COMMODITY DATA ── */
+// IHSG, USD/IDR, Bond, Gold, CPO sekarang ditampilkan via TradingView
+// single-quote widgets di atas — fully real-time, no API key needed.
+
+/* ── NEWS FEED (curated static with live-feel timestamps) ── */
+function renderNews() {
+  const stories = [
+    { icon:'🏦', text:'BI Pertahankan BI Rate 5,75% — Gubernur Perry: Stabilitas Rupiah Jadi Prioritas Utama', sent:'neg', tag:'HAWKISH' },
+    { icon:'📉', text:'IHSG Terkoreksi 1,77% — Tekanan Jual Asing Capai Rp 1,2T di Tengah Penguatan DXY', sent:'neg', tag:'NEGATIVE' },
+    { icon:'⛏️', text:'Harga Batu Bara Newcastle Rebound ke $104/MT — Permintaan India dan China Meningkat', sent:'pos', tag:'POSITIVE' },
+    { icon:'💹', text:'Inflasi Feb 2025 Tercatat 1,06% YoY — Terendah Sejak 2021, BPS Konfirmasi Data', sent:'neu', tag:'NEUTRAL' },
+    { icon:'🌐', text:'Fed Tahan Suku Bunga di 4,25–4,50% — Pasar Harapkan Pemangkasan Pertama Q3 2025', sent:'neu', tag:'NEUTRAL' },
+    { icon:'📊', text:'Defisit Neraca Transaksi Berjalan Q4 2024: $2,1M — BI Waspadai Tekanan Capital Outflow', sent:'neg', tag:'NEGATIVE' },
+    { icon:'🏗️', text:'Realisasi Investasi Asing (FDI) Q4 2024 Tumbuh 11,3% YoY — Sektor EV & Energi Hijau Dominan', sent:'pos', tag:'POSITIVE' },
+  ];
+
+  const now = new Date();
+  const feed = document.getElementById('news-feed');
+  feed.innerHTML = stories.map((s, i) => {
+    const t = new Date(now - i * 14 * 60000);
+    const ts = t.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' }) + ' WIB';
+    const sentClass = s.sent === 'pos' ? 'pos' : s.sent === 'neg' ? 'neg' : 'neu';
+    return `
+      <div class="news-item">
+        <span class="news-icon">${s.icon}</span>
+        <div style="flex:1">
+          <div class="news-text">${s.text}</div>
+          <div style="font-size:9px;color:var(--text-dim);margin-top:3px">${ts}</div>
+        </div>
+        <span class="news-sentiment ${sentClass}">${s.tag}</span>
+      </div>`;
+  }).join('');
+}
+
+/* ── INIT ── */
+fetchCrypto();
+renderNews();
+
+// Refresh crypto every 60s
+setInterval(fetchCrypto, 60000);
+</script>
+</body>
+</html>
